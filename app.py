@@ -25,7 +25,7 @@ def generate_hash(file_path):
     with open(file_path, 'rb') as f:
         while chunk := f.read(4096):
             hasher.update(chunk)
-        
+    
     file_hash = hasher.hexdigest()
     os.remove(file_path)  # Remove file after hashing
     return file_hash
@@ -33,7 +33,7 @@ def generate_hash(file_path):
 # Serve Frontend
 @app.route("/")
 def home():
-    return render_template("index.html")  # Ensure you have a templates/index.html file
+    return render_template("index.html")
 
 # Upload & Add to Blockchain
 @app.route('/upload', methods=['POST'])
@@ -49,14 +49,16 @@ def upload_file():
     try:
         sender = web3.to_checksum_address(sender)  # Convert to checksum format
     except ValueError:
-        return jsonify({'error': 'Invalid Ethereum address'}), 400  # Handle invalid address error
+        return jsonify({'error': 'Invalid Ethereum address'}), 400
     
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
     file_hash = generate_hash(file_path)
     
-    # print the generated hash
-    print(f"generated hash upload {file_hash}")
+    # Check if document already exists
+    exists, _ = contract.functions.verifyDocument(file_hash).call()
+    if exists:
+        return jsonify({'error': 'Document already exists'}), 400
     
     # Interact with Smart Contract using MetaMask address
     nonce = web3.eth.get_transaction_count(sender)
@@ -68,15 +70,14 @@ def upload_file():
     })
     
     # Ensure all transaction parameters are properly formatted for MetaMask
-    # Convert any integer values to hex strings
     formatted_tx = {
         'from': tx['from'],
         'to': tx['to'],
-        'gas': hex(tx['gas']),  # Convert gas to hex
-        'gasPrice': hex(tx['gasPrice']),  # Convert gasPrice to hex
+        'gas': hex(tx['gas']),
+        'gasPrice': hex(tx['gasPrice']),
         'data': tx['data'],
-        'nonce': hex(tx['nonce']),  # Convert nonce to hex
-        'value': '0x0'  # Explicitly set value
+        'nonce': hex(tx['nonce']),
+        'value': '0x0'
     }
     
     return jsonify({'message': 'Sign this transaction in MetaMask', 'tx': formatted_tx}), 200
@@ -91,9 +92,6 @@ def verify_document():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
     file_hash = generate_hash(file_path)
-    
-    # file hash while uploading
-    print(f"generated hash during verify{file_hash}")
     
     exists, timestamp = contract.functions.verifyDocument(file_hash).call()
     if exists:

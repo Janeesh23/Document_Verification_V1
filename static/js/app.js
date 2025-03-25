@@ -12,17 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const verifyBtn = document.getElementById('verifyBtn');
     const verifyLoader = document.getElementById('verifyLoader');
     const verifyStatus = document.getElementById('verifyStatus');
-    const transactionDetails = document.getElementById('transactionDetails');
 
     // Application state
     let currentAccount = null;
 
     // Check if MetaMask is installed
     const checkMetaMaskInstalled = () => {
-        if (typeof window.ethereum !== 'undefined') {
-            return true;
-        }
-        return false;
+        return typeof window.ethereum !== 'undefined';
     };
 
     // Connect to MetaMask
@@ -31,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showAlert(walletStatus, 'MetaMask is not installed. Please install MetaMask to use this application.', 'danger');
             return;
         }
-
         try {
             connectWalletBtn.disabled = true;
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -83,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showAlert(uploadStatus, 'Please select a file to upload.', 'danger');
             return;
         }
-
         try {
             // Show loader
             uploadBtn.disabled = true;
@@ -103,12 +97,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             if (!response.ok) {
+                // Check for specific error messages
+                if (data.error === 'Document already exists') {
+                    showAlert(uploadStatus, 'This document has already been registered on the blockchain.', 'info');
+                    return;
+                }
                 throw new Error(data.error || 'Error uploading document');
             }
-            
-            // Display transaction details
-            transactionDetails.textContent = JSON.stringify(data.tx, null, 2);
-            transactionDetails.classList.remove('hidden');
             
             showAlert(uploadStatus, 'Please sign the transaction in MetaMask...', 'info');
             
@@ -123,17 +118,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 value: '0x0' // Explicitly set value to 0
             };
             
-            console.log("Sending transaction params:", txParams);
-            
             const txHash = await window.ethereum.request({
                 method: 'eth_sendTransaction',
                 params: [txParams],
             });
             
-            showAlert(uploadStatus, `Document successfully registered! Transaction Hash: ${txHash}`, 'success');
+            showAlert(uploadStatus, `Document successfully registered!`, 'success');
+            
+            // Reset file input
+            uploadFile.value = '';
         } catch (txError) {
             console.error('Transaction error:', txError);
-            // Make sure we're handling the error object correctly
             const errorMessage = txError.message || 'Transaction failed or was rejected';
             showAlert(uploadStatus, errorMessage, 'danger');
         } finally {
@@ -150,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showAlert(verifyStatus, 'Please select a file to verify.', 'danger');
             return;
         }
-
         try {
             // Show loader
             verifyBtn.disabled = true;
@@ -175,9 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 showAlert(
                     verifyStatus, 
-                    `Document verified! This document was registered on ${formattedDate}<br>Hash: ${data.file_hash}`, 
+                    `Document verified! <br>Registered on: ${formattedDate}`, 
                     'success'
                 );
+                
+                // Reset file input
+                verifyFile.value = '';
             } else {
                 showAlert(verifyStatus, data.message, 'danger');
             }

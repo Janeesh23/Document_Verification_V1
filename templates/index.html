@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blockchain Document Verification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
@@ -11,14 +12,14 @@
     
     <div class="container">
         <h2>Connect MetaMask</h2>
-        <p>Connect your MetaMask wallet to register and verify documents on the blockchain.</p>
+        <p class="text-center">Connect your MetaMask wallet to register and verify documents on the blockchain.</p>
         <button id="connectWallet" class="btn">Connect Wallet</button>
         <div id="walletStatus"></div>
     </div>
 
     <div class="container" id="registerContainer">
         <h2>Register Document</h2>
-        <p>Upload a document to register it on the blockchain.</p>
+        <p class="text-center">Upload a document to register it on the blockchain.</p>
         
         <form id="uploadForm">
             <div class="form-group">
@@ -30,12 +31,11 @@
         </form>
         
         <div id="uploadStatus" class="status"></div>
-        <div id="transactionDetails" class="hidden"></div>
     </div>
 
     <div class="container">
         <h2>Verify Document</h2>
-        <p>Check if a document has been registered on the blockchain.</p>
+        <p class="text-center">Check if a document has been registered on the blockchain.</p>
         
         <form id="verifyForm">
             <div class="form-group">
