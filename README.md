@@ -26,27 +26,6 @@ This is a full-stack decentralized application (DApp) for verifying documents on
 | Wallet         | MetaMask                    |
 
 ---
-
-## Project Structure
-
-```
-document-verification-blockchain/
-├── contracts/
-│   └── DocumentVerification.sol       # Solidity Smart Contract
-├── migrations/
-│   └── 1_deploy_contracts.js          # Truffle Deployment Script
-├── build/contracts/                   # Compiled ABI & Contract JSON
-├── static/
-│   └── app.js                         # Frontend JS (MetaMask & Logic)
-├── templates/
-│   └── index.html                     # Frontend HTML Template
-├── uploads/                           # Temporary Uploaded Files
-├── app.py                             # Flask Web Server
-├── truffle-config.js                  # Truffle Network Configuration
-```
-
----
-
 ## Setup Instructions
 
 ### 1. Prerequisites
