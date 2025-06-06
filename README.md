@@ -92,20 +92,6 @@ Server will run at:
 - Later, any file can be re-uploaded to verify if its hash matches  
 
 ---
-
-## Smart Contract: `DocumentVerification.sol`
-
-```solidity
-function addDocument(string memory _fileHash) public;
-function verifyDocument(string memory _fileHash) public view returns (bool, uint256);
-```
-
-- Prevents duplicate document registrations  
-- Emits a `DocumentAdded` event  
-- Stores timestamp of registration for audit  
-
----
-
 ## MetaMask Transaction Flow
 
 1. User uploads a file  
