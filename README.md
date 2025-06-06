@@ -116,12 +116,3 @@ function verifyDocument(string memory _fileHash) public view returns (bool, uint
 
 ---
 
-## Future Enhancements
-
-- Add decentralized file storage (e.g. IPFS or S3)  
-- Integrate email or QR code-based verification  
-- Deploy to public Ethereum testnets (Goerli, Sepolia)  
-- Add drag-and-drop support + better file previews  
-
----
-
